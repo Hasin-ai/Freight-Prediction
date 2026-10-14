@@ -1,0 +1,25 @@
+\section{Reproducibility}
+
+Everything runs in Docker. You need Docker with Compose v2, \texttt{make}, and the four CSV files in
+\texttt{data/}.
+
+\begin{verbatim}
+cp .env.example .env        # choose a database password
+make all                    # about 15 minutes on 2 CPU cores
+\end{verbatim}
+
+\texttt{make all} runs, in order: \texttt{up} (PostgreSQL 16 and an MLflow 3.5 server with persistent volumes),
+\texttt{data-check} (schema and SHA-256 of the inputs), \texttt{experiments} (baselines, the six ladder steps and
+seven ablations), \texttt{tune} (\TuneTrials{} Optuna trials and the nested check), \texttt{test-lock} (the
+one-shot locked test), \texttt{train} (final fit, export to \texttt{model/}, registration as
+\texttt{freight-rate-model@champion}), \texttt{predict} (submission files checked by \texttt{score.py}),
+\texttt{report} (this PDF), \texttt{test} and \texttt{lint}.
+
+Every run compares its result with the value logged by the earlier project and stops if they differ by more than
+five cents. Seeds are fixed: LightGBM 42, Optuna 42, bootstrap 7, hidden cities 100 plus the fold number. Each
+MLflow run records the dataset hashes, git commit, configuration file, parameters, fold manifests, per-fold and mean
+metrics, out-of-fold predictions and a residual plot. The MLflow interface is at \texttt{http://localhost:5050}.
+
+The champion training run is \texttt{\ChampionRun} and the locked-test run of the final model is
+\texttt{\LockedTestRun}. Fitting takes \FitSeconds{} seconds on all \RowsAfterScreen{} screened loads, and
+inference takes about \InferenceMicroseconds{} microseconds per load.

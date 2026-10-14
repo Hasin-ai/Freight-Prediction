@@ -1,0 +1,29 @@
+\section{Summary}
+
+\textbf{The task.} We predict the posted rate, in dollars, for \NValidation{} truckload shipments (``loads'') moving
+in November and December 2025. We learn from \NTrain{} labelled loads from January to October 2025. We also draw a
+daily December forecast for one fixed lane.
+
+\textbf{Why it is hard.} The scoring months come after every training month, so this is a forecast, not an
+interpolation. About \CorruptPct\% of the training rates are recording errors. \UnseenShare\% of the scoring loads
+touch cities that never appear in training.
+
+\textbf{The model.} A two-stage model. Stage one is a ridge regression\footnote{Linear regression with a small
+penalty on large coefficients, which keeps estimates stable \citep{hoerl1970ridge}.} on the logarithm of the rate.
+It describes the load (distance, weight, location, equipment) and the market (the daily market index, a slow upward
+drift and a price ramp near quarter ends). Stage two is a small LightGBM tree ensemble \citep{ke2017lightgbm} that
+corrects what stage one leaves over. Recent loads count more than old ones in training.
+
+\textbf{Headline numbers.} We measure error as the mean absolute error in dollars on loads with plausible labels,
+re-weighted to the scoring mix of new and known cities (``wMAE'', Section~\ref{sec:validation}).
+\begin{itemize}
+  \item Development folds: \usd{\DevStepF} (\MapeDevStepF\% of the rate), against \usd{\DevStepA} for the simplest
+        sensible price and \usd{\DevStepB} for the original CatBoost submission.
+  \item Locked test (September--October 2025, evaluated once): \usd{\TestFinalTuned} (\MapeTestFinal\%), against
+        \usd{\TestCatboostRawDollars} for the original submission.
+  \item December 31 chart value: \usd{\DecLast}.
+\end{itemize}
+
+\textbf{Main caveats.} Tuning bought \usd{\DevTunedGain} on the development folds, but on the locked test the
+untuned version was slightly better; the two are practically equivalent. The test period had already been
+inspected by earlier work, so its numbers are mildly optimistic. December relies on the quarter-end ramp recurring.

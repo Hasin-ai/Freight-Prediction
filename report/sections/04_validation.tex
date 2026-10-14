@@ -1,0 +1,33 @@
+\section{Validation design}\label{sec:validation}
+
+\textbf{Rolling-origin folds.} A fold mimics the real situation once. We pick a cut-off date (the ``origin''),
+train on every load up to it, and score the loads of the next \HorizonDays{} days. We use five origins: the last day of
+February, March, April, May and June 2025. Each fold's training window grows with time (``expanding window'').
+This is the standard way to evaluate forecasts \citep{hyndman2021fpp3}. A random split would mix future and past
+loads and reward features that only work by looking ahead.
+
+\textbf{Hidden cities.} In every fold, \HiddenCitiesPerFold{} random cities (fixed seed: 100 plus the fold number) are removed from
+training. Their loads still appear in the scored period. This mimics the \UnseenShare\% of scoring loads that touch
+new cities.
+
+\textbf{Locked test.} The last origin, 31 August, scores September and October. Nothing about the model was chosen
+on it. It was evaluated once, after the final configuration was frozen, by a script that refuses to run twice.
+One honest caveat: earlier analyses of this project had already looked at these months, so the test is not fully
+untouched. No untouched labelled period exists.
+
+\textbf{Metric.} We report the mean absolute error (MAE) in dollars on loads with plausible labels. Loads touching
+hidden cities and other loads are re-weighted to the scoring mix (\UnseenWeight\% and \SeenWeight\%). We call this
+\emph{wMAE}. We chose it for three reasons.
+\begin{itemize}
+  \item It is in dollars, the unit of the business question.
+  \item It is robust to the corrupted labels. On the locked test those \CorruptPct\% of loads produce
+        \CorruptShareOfError\% of all absolute error.
+  \item It matches the median forecast that the log model produces.
+\end{itemize}
+The root mean squared error (RMSE) squares each error, so a handful of 3-to-5-times label errors dominate it. On the test period
+every model in this report scores an RMSE between \usd{\RmseTestMin} and \usd{\RmseTestMax}, whatever its quality, so
+RMSE cannot rank models here. We still report it, together with MAPE (mean absolute percentage error) and bias.
+
+\textbf{Comparing two models.} Differences come with a 95\% interval from a paired block bootstrap. Both models are
+scored on the same loads; we resample whole 7-day blocks of days, because loads on nearby days share the market
+and are not independent \citep{kunsch1989jackknife}.

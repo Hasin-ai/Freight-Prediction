@@ -21,7 +21,13 @@ import pandas as pd  # noqa: E402
 from freight import data  # noqa: E402
 from freight.config import PROJECT_ROOT, load_experiment, load_yaml  # noqa: E402
 from freight.cross_validation import labelled_loads  # noqa: E402
-from freight.metrics import by_segment, horizon_bucket, paired_block_bootstrap  # noqa: E402
+from freight.label_screen import LOWER_RATIO, UPPER_RATIO  # noqa: E402
+from freight.metrics import (  # noqa: E402
+    UNSEEN_CITY_SHARE_IN_VALIDATION,
+    by_segment,
+    horizon_bucket,
+    paired_block_bootstrap,
+)
 from freight.plots import BLUE, GREEN, GREY, INK, ORANGE  # noqa: E402
 from freight.tracking import latest_run, load_predictions  # noqa: E402
 
@@ -87,6 +93,20 @@ def ci_text(result: dict) -> str:
 
 
 # ---------------------------------------------------------------- data facts
+def design_constants() -> None:
+    """Method settings quoted in the text, read from the code and configs rather than retyped."""
+    splits = load_yaml("configs/data.yaml")["splits"]
+    define("HorizonDays", splits["horizon_days"], 0)
+    define("HiddenCitiesPerFold", splits["hidden_cities_per_fold"], 0)
+    define("UnseenWeight", 100 * UNSEEN_CITY_SHARE_IN_VALIDATION)
+    define("SeenWeight", 100 * (1 - UNSEEN_CITY_SHARE_IN_VALIDATION))
+    define("ScreenLow", LOWER_RATIO)
+    define("ScreenHigh", UPPER_RATIO, 1)
+    final = load_yaml("configs/final.yaml")["model"]["params"]
+    define("RecencyTau", final["recency_tau_days"], 1)
+    define("RidgeAlpha", final["alpha"], 3)
+
+
 def data_quality_facts() -> None:
     raw_train, raw_validation = data.load("train"), data.load("validation")
     loads = labelled_loads()
@@ -105,6 +125,9 @@ def data_quality_facts() -> None:
     define("UnseenCities", len(new_cities), 0)
     define("UnseenCityList", ", ".join(new_cities))
     define("UnseenShare", 100 * touches.mean())
+    coordinates = data.city_coordinates(raw_train, raw_validation)
+    southernmost_training = coordinates.loc[sorted(seen), "lat"].min()
+    define("LaredoDegreesSouth", southernmost_training - coordinates.loc["Laredo", "lat"], 1)
 
     clean_rows = loads[loads["clean"]]
     rate_per_mile = clean_rows["posted_rate"] / clean_rows["distance"]
@@ -385,9 +408,17 @@ def locked_test() -> pd.DataFrame:
             define(f"TestGap{key}Low", result["ci_low"])
             define(f"TestGap{key}High", result["ci_high"])
     write_table("locked_test", pd.DataFrame(rows), "lrrrrrrl")
+    rmse = [run.data.metrics["test.mean.RMSE_all"] for _, run in runs.values()]
+    define("RmseTestMin", min(rmse), 0)
+    define("RmseTestMax", max(rmse), 0)
     define("MapeTestFinal", final_run.data.metrics["test.mean.MAPE_clean"])
     define("TestFinalAllMAE", final_run.data.metrics["test.mean.MAE_all"])
     define("LockedTestRun", final_run.info.run_id)
+    clean = final_predictions[final_predictions["clean"]]
+    october = clean[clean["date"].dt.month == 10]
+    define("OctoberUnderForecast", 100 * np.median(np.log(october["actual"] / october["predicted"])), 1)
+    default_gap = paired_block_bootstrap(load_predictions(runs[final["locked_test"][1]][1], "test"), final_predictions)
+    define("TunedDefaultTestPct", 100 * abs(default_gap["difference"]) / final_run.data.metrics["test.mean.MAE_clean"], 1)
     corrupt = ~final_predictions["clean"]
     absolute = (final_predictions["predicted"] - final_predictions["actual"]).abs()
     define("CorruptShareOfError", 100 * absolute[corrupt].sum() / absolute.sum(), 0)
@@ -518,9 +549,35 @@ def run_inventory() -> None:
     write_table("run_ids", pd.DataFrame(rows), "lll")
 
 
+def update_readme() -> None:
+    """Replace the results block of README.md with the headline numbers from MLflow."""
+    final = load_yaml("configs/final.yaml")
+    rows = ["| Model | Dev wMAE ($) | Locked-test wMAE ($) | Locked-test MAPE |", "|---|---:|---:|---:|"]
+    for path in final["locked_test"]:
+        config = load_experiment(path)
+        test = latest_run("05-locked-test", config["name"]).data.metrics
+        try:
+            dev = f"{latest_run(config['experiment'], config['name']).data.metrics['dev.mean.wMAE_clean']:.2f}"
+        except LookupError:
+            dev = "–"
+        rows.append(f"| {config['name']} | {dev} | {test['test.mean.wMAE_clean']:.2f} | {test['test.mean.MAPE_clean']:.2f}% |")
+    rows.append("")
+    rows.append(
+        f"wMAE = clean-row MAE re-weighted to the scoring mix of new and known cities. December 31 chart value: "
+        f"${macros['DecLast']}. Champion run `{macros['ChampionRun']}`; locked-test run `{macros['LockedTestRun']}`."
+    )
+    readme = PROJECT_ROOT / "README.md"
+    text = readme.read_text()
+    start, end = "<!-- results:start -->", "<!-- results:end -->"
+    before, rest = text.split(start)
+    after = rest.split(end)[1]
+    readme.write_text(before + start + "\n" + "\n".join(rows) + "\n" + end + after)
+
+
 def main() -> None:
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
+    design_constants()
     data_quality_facts()
     ladder_predictions = ladder()
     baselines()
@@ -529,6 +586,7 @@ def main() -> None:
     locked_test()
     final_model()
     run_inventory()
+    update_readme()
     lines = [
         f"\\newcommand{{\\{name}}}{{{escape(value) if name.endswith(('Run', 'List')) else value}}}"
         for name, value in sorted(macros.items())

@@ -1,0 +1,19 @@
+\section{Limitations}
+
+\begin{itemize}
+  \item \textbf{Test contamination.} Earlier analyses had already looked at September and October, and the
+        quarter-end feature was confirmed there. The locked-test numbers are therefore mildly optimistic.
+  \item \textbf{December is an extrapolation.} The labels contain no December. The forecast assumes the
+        quarter-end ramp recurs, and holiday effects cannot be learned.
+  \item \textbf{Level shifts.} The model cannot anticipate a sudden change in the price level that the market index
+        does not show, like the step in early October. In October the actual level sat
+        \OctoberUnderForecast\% above the forecast.
+  \item \textbf{Market index dependence.} The market index is the most important input. Without the target day's
+        index, accuracy falls towards the no-market models (\usd{\AblNoMarket} worse on the development folds).
+  \item \textbf{Label noise in scoring.} If the hidden labels contain the same \CorruptPct\% of errors, the all-row
+        error will stay near \usd{\TestFinalAllMAE} whatever the model.
+  \item \textbf{Synthetic-looking data.} City coordinates are shifted and the data look simulated. Statements about
+        freight markets describe this dataset only.
+  \item \textbf{Out-of-range geography.} Laredo lies \LaredoDegreesSouth{} degrees of latitude south of every training city, so its
+        prices extend the coordinate curves beyond the data.
+\end{itemize}

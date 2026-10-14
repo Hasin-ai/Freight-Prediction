@@ -1,0 +1,67 @@
+{
+ "model_type": "ridge_plus_residual_trees",
+ "ridge": {
+  "alpha": 0.2649564339357501,
+  "groups": [
+   "load",
+   "market",
+   "trend",
+   "quarter_end",
+   "distance_x_market"
+  ],
+  "recency_tau_days": 122.61806047369296,
+  "spline_knots": {
+   "distance_knots": 5,
+   "weight_knots": 7,
+   "coordinate_knots": 4,
+   "coordinate_extrapolation": "linear"
+  },
+  "rows_used_after_label_screen": 47323,
+  "rows_available": 48000
+ },
+ "residual_lightgbm": {
+  "n_estimators": 293,
+  "learning_rate": 0.02145244449350786,
+  "num_leaves": 62,
+  "min_child_samples": 90,
+  "subsample": 0.8,
+  "subsample_freq": 1,
+  "colsample_bytree": 0.8148594592943516,
+  "verbose": -1,
+  "random_state": 42,
+  "n_jobs": 1,
+  "reg_lambda": 3.261559198325916
+ },
+ "interval_quantiles_log_scale": {
+  "Dry Van": {
+   "80": [
+    -0.02510588302815754,
+    0.026150718488348032
+   ],
+   "95": [
+    -0.03879770190582431,
+    0.03901645741964846
+   ]
+  },
+  "Flatbed": {
+   "80": [
+    -0.024225964435383482,
+    0.032662768665034654
+   ],
+   "95": [
+    -0.03862369967038535,
+    0.06301521469557839
+   ]
+  },
+  "Reefer": {
+   "80": [
+    -0.02513665824288816,
+    0.02869369723970768
+   ],
+   "95": [
+    -0.03985541603963668,
+    0.045919639459419515
+   ]
+  }
+ }
+}

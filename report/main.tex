@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[numbers]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+
+% Every number below is generated from MLflow and the data by scripts/make_report_assets.py.
+\input{tables/numbers.tex}
+\newcommand{\usd}[1]{\$#1}
+\newcommand{\inputtable}[1]{\begin{center}\small\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{\input{tables/#1.tex}}\end{center}}
+
+\title{Freight Rate Prediction\\[0.3em]\large Data, validation, model and results}
+\author{Hasin Ahmed}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+\input{sections/01_summary}
+\input{sections/02_problem}
+\input{sections/03_data_quality}
+\input{sections/04_validation}
+\input{sections/05_features}
+\input{sections/06_journey}
+\input{sections/07_tuning}
+\input{sections/08_evaluation}
+\input{sections/09_december}
+\input{sections/10_limitations}
+\input{sections/11_reproducibility}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+\end{document}

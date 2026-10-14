@@ -1,0 +1,28 @@
+\section{Problem and data}
+
+\textbf{Files.} Four CSV files define the task.
+\begin{itemize}
+  \item \texttt{train-test.csv}: \NTrain{} loads from 1 January to 31 October 2025, with the posted rate.
+  \item \texttt{validation.csv}: \NValidation{} loads from 1 November to 31 December 2025, without rates. These are
+        the loads we must price.
+  \item \texttt{validation-predictions-template.csv}: the load IDs, in the order the submission must follow.
+  \item \texttt{december-chart-inputs.csv}: one load (Lexington to Fort Wayne, 360 miles, Dry Van, 32,000 lb)
+        for every day of December.
+\end{itemize}
+
+\textbf{Columns.} Each load has a pickup and delivery city with coordinates, the road distance, the equipment type
+(Dry Van, Reefer or Flatbed), the weight, the date, a \texttt{market\_index} and a \texttt{quote\_signal}.
+
+\textbf{Target.} The posted rate in dollars. We model its logarithm, so errors are relative and a 2\% miss counts
+the same on a \usd{300} and a \usd{5,000} load. The forecast is the exponential of the predicted logarithm, which
+estimates the median rate.
+
+\textbf{Horizon.} On 31 October we know every label so far and must price loads 1 to 61 days ahead.
+The market index of each target day is known, because it is a column of the scoring file.
+
+\textbf{Unseen cities.} \UnseenCities{} cities in the scoring file never appear in training (\UnseenCityList).
+They touch \UnseenShare\% of the scoring loads. A model that memorises city names cannot price them, so the model
+uses coordinates instead.
+
+\textbf{Metric.} The assessment does not name a scoring metric. We chose the mean absolute error in dollars
+(Section~\ref{sec:validation}) and report several others next to it.

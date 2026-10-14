@@ -1,0 +1,38 @@
+flavors:
+  python_function:
+    artifacts:
+      model:
+        path: artifacts/model.pkl
+        uri: /app/model/model.pkl
+    cloudpickle_version: 3.1.2
+    code: code
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.13.16
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 3.5.0
+model_id: null
+model_size_bytes: 2153554
+model_uuid: 2c343d3afc3743f5b39f17372d0adb90
+prompts: null
+signature:
+  inputs: '[{"type": "string", "name": "pickup", "required": true}, {"type": "string",
+    "name": "delivery", "required": true}, {"type": "double", "name": "pickup_lat",
+    "required": true}, {"type": "double", "name": "pickup_lon", "required": true},
+    {"type": "double", "name": "delivery_lat", "required": true}, {"type": "double",
+    "name": "delivery_lon", "required": true}, {"type": "double", "name": "distance",
+    "required": true}, {"type": "string", "name": "equipment", "required": true},
+    {"type": "double", "name": "weight", "required": false}, {"type": "string", "name":
+    "date", "required": true}, {"type": "double", "name": "market_index", "required":
+    false}, {"type": "double", "name": "market_index_day", "required": false}]'
+  outputs: '[{"type": "double", "name": "predicted_rate", "required": true}, {"type":
+    "double", "name": "lo80", "required": true}, {"type": "double", "name": "hi80",
+    "required": true}, {"type": "double", "name": "lo95", "required": true}, {"type":
+    "double", "name": "hi95", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-10-14 02:39:29.795556'
