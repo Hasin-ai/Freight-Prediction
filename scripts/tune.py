@@ -124,7 +124,10 @@ def main() -> None:
         study = run_search(args.trials)
         best = json.loads(study.best_trial.user_attrs["params"])
         trials = study.trials_dataframe()
-        importance = {k: float(v) for k, v in optuna.importance.get_param_importances(study).items()}
+        evaluator = optuna.importance.FanovaImportanceEvaluator(seed=42)  # unseeded fANOVA varies run to run
+        importance = {
+            k: float(v) for k, v in optuna.importance.get_param_importances(study, evaluator=evaluator).items()
+        }
         mlflow.log_metric(f"best.dev.mean.{PRIMARY_METRIC}", study.best_value)
         mlflow.log_dict(best, "tuning/best_params.json")
         mlflow.log_dict(importance, "tuning/param_importance.json")
