@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 
-from ..features import LoadDescription, direct_tree_inputs
+from ..features import LoadDescription, as_row_major, direct_tree_inputs
 from ..label_screen import plausible_label_mask
 
 
@@ -55,7 +55,7 @@ class CrossSectionPlusNaiveIndex:
 
     def fit(self, loads: pd.DataFrame, log_rate: np.ndarray) -> CrossSectionPlusNaiveIndex:
         self.description = LoadDescription().fit(loads)
-        load_design = self.description.transform(loads).to_numpy(dtype=float)
+        load_design = as_row_major(self.description.transform(loads))
         design = np.column_stack([load_design, loads["market_deviation_this_load"].values])
         kept = plausible_label_mask(load_design, log_rate)
         days = loads["date"].values[kept]
@@ -69,7 +69,7 @@ class CrossSectionPlusNaiveIndex:
         return self
 
     def predict_log(self, loads: pd.DataFrame) -> np.ndarray:
-        load_design = self.description.transform(loads).to_numpy(dtype=float)
+        load_design = as_row_major(self.description.transform(loads))
         design = np.column_stack([load_design, loads["market_deviation_this_load"].values])
         return self.ridge.predict(design) + self.last_level
 
@@ -156,7 +156,7 @@ class LightGBMDirect:
         self.tree_params = {**LIGHTGBM_DIRECT_DEFAULTS, **(tree_params or {})}
 
     def fit(self, loads: pd.DataFrame, log_rate: np.ndarray) -> LightGBMDirect:
-        load_design = LoadDescription().fit(loads).transform(loads).to_numpy(dtype=float)
+        load_design = as_row_major(LoadDescription().fit(loads).transform(loads))
         kept = plausible_label_mask(load_design, log_rate)
         self.model = lgb.LGBMRegressor(**self.tree_params).fit(direct_tree_inputs(loads)[kept], log_rate[kept])
         return self

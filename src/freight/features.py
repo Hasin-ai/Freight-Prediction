@@ -131,7 +131,13 @@ def direct_tree_inputs(loads: pd.DataFrame) -> pd.DataFrame:
     return inputs
 
 
+def as_row_major(design: pd.DataFrame) -> np.ndarray:
+    """Row-major float array. pandas often returns column-major memory; BLAS then sums in a different order and
+    results move by ~1e-14, enough to flip near-tied LightGBM splits in the residual stage downstream."""
+    return np.ascontiguousarray(design.to_numpy(dtype=float))
+
+
 def standardise(design: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     """Column means and standard deviations; the epsilon keeps all-zero columns (e.g. no quarter end yet) finite."""
-    values = design.to_numpy(dtype=float)
+    values = as_row_major(design)
     return values.mean(axis=0), values.std(axis=0) + 1e-9

@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.linear_model import Ridge
 
 from ..cleaning import recency_weights
-from ..features import LoadDescription, ridge_design, standardise
+from ..features import LoadDescription, as_row_major, ridge_design, standardise
 from ..label_screen import plausible_label_mask
 
 DEFAULT_GROUPS = ("load", "market", "trend", "quarter_end", "distance_x_market")
@@ -42,10 +42,10 @@ class StructuralRidge:
         design = ridge_design(loads, self.description, self.groups)
         self.feature_names = list(design.columns)
         self.means, self.scales = standardise(design)
-        standardised = (design.to_numpy(dtype=float) - self.means) / self.scales
+        standardised = (as_row_major(design) - self.means) / self.scales
 
         if self.use_label_screen:
-            load_only = self.description.transform(loads).to_numpy(dtype=float)
+            load_only = as_row_major(self.description.transform(loads))
             self.kept_rows = plausible_label_mask(load_only, log_rate)
         else:
             self.kept_rows = np.ones(len(log_rate), dtype=bool)
@@ -58,7 +58,7 @@ class StructuralRidge:
         return self
 
     def predict_log(self, loads: pd.DataFrame) -> np.ndarray:
-        design = ridge_design(loads, self.description, self.groups).to_numpy(dtype=float)
+        design = as_row_major(ridge_design(loads, self.description, self.groups))
         return self.ridge.predict((design - self.means) / self.scales)
 
     def coefficients(self) -> dict[str, float]:
