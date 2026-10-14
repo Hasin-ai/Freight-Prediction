@@ -6,6 +6,8 @@ fills the December chart for one lane. Everything runs in Docker and every run i
 **Model.** Ridge regression on log(rate) — splines of distance, weight and location, equipment, the daily market
 index, a slow drift and a quarter-end ramp — plus a small LightGBM on the ridge residuals. Recent loads weigh more.
 Registered in MLflow as `freight-rate-model@champion`; weights and parameters are also exported to `model/`.
+`docker compose up` registers the bundled `model/pyfunc` model as `@champion` when that alias is missing; an existing
+champion is left unchanged. `make train` trains a new model and updates the alias.
 
 **Report.** [`report/freight_report.pdf`](report/freight_report.pdf) explains the data problems, the validation
 design, every feature, the improvement ladder, tuning, the locked test and the December forecast.

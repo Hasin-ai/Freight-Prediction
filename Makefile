@@ -11,9 +11,10 @@ ABLATIONS   := $(sort $(wildcard configs/ablations/*.yaml))
 
 all: up data-check experiments tune test-lock train predict report test lint
 
-up:                 ## build images, start PostgreSQL + MLflow (UI on http://localhost:$${MLFLOW_PORT:-5050})
+up:                 ## build images, start PostgreSQL + MLflow, register the bundled model
 	$(COMPOSE) --profile tools build
 	$(COMPOSE) up -d --wait postgres mlflow
+	$(COMPOSE) run --rm model-register
 
 down:
 	$(COMPOSE) down

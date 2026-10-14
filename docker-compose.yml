@@ -40,6 +40,24 @@ services:
       retries: 30
     restart: unless-stopped
 
+  model-register:
+    build:
+      context: .
+      dockerfile: docker/register.Dockerfile
+    image: freight-rate-submission/model-register:3.5.0
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    entrypoint: ["python3"]
+    command: ["scripts/register_bundled_model.py"]
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      GIT_PYTHON_REFRESH: quiet
+    volumes:
+      - ./:/app
+    working_dir: /app
+    restart: "no"
+
   trainer:
     build:
       context: .
