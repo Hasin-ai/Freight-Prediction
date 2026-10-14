@@ -77,7 +77,10 @@ def ridge_design(loads: pd.DataFrame, description: LoadDescription, groups: Sequ
     if "market" in groups:
         parts.append(loads[["market_level_today", "market_deviation_this_load"]].reset_index(drop=True))
     if "trend" in groups:
-        parts.append(loads[["days_since_start"]].reset_index(drop=True))
+        # In units of 100 days, so the coefficient reads as drift per 100 days. The unit also fixes floating-point
+        # rounding in the standardisation, which the published (seeded) Optuna search is sensitive to.
+        hundreds = loads["days_since_start"].to_numpy() / 100.0
+        parts.append(pd.DataFrame({"hundreds_of_days_since_start": hundreds}))
     if "day_of_week" in groups:
         weekday = loads["day_of_week"].values
         parts.append(pd.DataFrame({f"weekday_{d}": (weekday == d).astype(float) for d in range(1, 7)}))

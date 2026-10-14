@@ -438,7 +438,7 @@ def final_model() -> None:
     )
     define("ElasticityDay", coefficients["market_level_today"], 3)
     define("ElasticityLoad", coefficients["market_deviation_this_load"], 3)
-    define("DriftPerMonth", 100 * 30 * coefficients["days_since_start"], 2)
+    define("DriftPerMonth", 100 * 30 / 100 * coefficients["hundreds_of_days_since_start"], 2)
     for equipment, key in [("dry_van", "DryVan"), ("flatbed", "Flatbed"), ("reefer", "Reefer")]:
         define(f"Ramp{key}", 100 * coefficients[f"quarter_end_progress_x_{equipment}"], 1)
     define("DistanceMarket", coefficients["distance_x_market"], 3)
