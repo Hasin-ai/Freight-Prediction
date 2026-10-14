@@ -15,3 +15,5 @@ report/*.fls
 report/*.fdb_latexmk
 report/main.pdf
 mlflow_backup/
+report/main.bbl
+report/main.blg
