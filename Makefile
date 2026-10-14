@@ -7,7 +7,7 @@ BASELINES   := $(sort $(wildcard configs/experiments/baseline_*.yaml))
 LADDER      := $(sort $(wildcard configs/experiments/0*.yaml))
 ABLATIONS   := $(sort $(wildcard configs/ablations/*.yaml))
 
-.PHONY: all up down data-check experiments tune test-lock train predict report test lint
+.PHONY: all up down data-check experiments tune test-lock train predict report test lint backup restore
 
 all: up data-check experiments tune test-lock train predict report test lint
 
@@ -46,3 +46,9 @@ test:
 
 lint:
 	$(RUN) sh -c "ruff check . && black --check ."
+
+backup:             ## save the MLflow database + artifacts to mlflow_backup/
+	scripts/mlflow_backup.sh backup
+
+restore:            ## load mlflow_backup/ into a fresh stack (the run IDs cited in the report then resolve)
+	scripts/mlflow_backup.sh restore

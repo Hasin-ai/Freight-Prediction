@@ -21,6 +21,8 @@ open http://localhost:5050   # MLflow UI (Windows: start http://localhost:5050)
 ```
 
 Single steps: `make up | data-check | experiments | tune | test-lock | train | predict | report | test | lint`.
+`make restore` loads the shipped `mlflow_backup/` instead (the exact runs whose IDs the report cites);
+`make backup` saves your own.
 Each run checks its result against the value logged by the earlier project and stops if they differ by more than
 $0.05. The locked test refuses to run twice (`make test-lock ARGS=--force` overrides; forced runs are tagged).
 
