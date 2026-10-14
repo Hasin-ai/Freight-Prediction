@@ -1,4 +1,5 @@
 name: "Step 6: final model (tuned, recency-weighted)"
+short_name: "Final (tuned, recency-weighted)"
 experiment: 02-improvement-ladder
 step: 6
 motivation: >

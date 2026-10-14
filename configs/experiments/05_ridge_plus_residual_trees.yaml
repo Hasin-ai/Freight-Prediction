@@ -1,4 +1,5 @@
 name: "Step 5: ridge + LightGBM on residuals (default settings)"
+short_name: "Ridge + residual trees"
 experiment: 02-improvement-ladder
 step: 5
 motivation: >

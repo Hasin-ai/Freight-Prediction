@@ -1,4 +1,5 @@
 name: "Baseline: equipment rate per mile x distance"
+short_name: "Equipment rate/mile x distance"
 experiment: 01-baselines
 motivation: Same model as ladder step 1, logged with the other baselines.
 reference:

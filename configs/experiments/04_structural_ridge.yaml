@@ -1,4 +1,5 @@
 name: "Step 4: structural ridge (splines, coordinates, market, trend, quarter-end)"
+short_name: "Structural ridge"
 experiment: 02-improvement-ladder
 step: 4
 motivation: >

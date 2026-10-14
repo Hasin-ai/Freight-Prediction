@@ -1,4 +1,5 @@
 name: "Baseline: lane rate per mile x distance"
+short_name: "Lane rate/mile x distance"
 experiment: 01-baselines
 motivation: Median rate per mile of the exact lane; falls back to equipment x distance decile for new lanes.
 reference:

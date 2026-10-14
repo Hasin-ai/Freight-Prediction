@@ -1,4 +1,5 @@
 name: "Step 3: LightGBM, log target + label screen + market + calendar"
+short_name: "LightGBM, log + screen + market"
 experiment: 02-improvement-ladder
 step: 3
 motivation: >

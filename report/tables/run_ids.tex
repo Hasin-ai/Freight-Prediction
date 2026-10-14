@@ -1,0 +1,33 @@
+\begin{tabular}{lll}
+\toprule
+Experiment & Run name & Run ID \\
+\midrule
+01-baselines & Baseline: equipment rate per mile x distance & 59dc6251994c4dd29f6e3ac87ede80f8 \\
+01-baselines & Baseline: lane rate per mile x distance & dd16e944cb3642aca46db4ce02a466ee \\
+01-baselines & Baseline: load description + naive daily price level & d9d6136ea9624145ad53740f73b1a270 \\
+02-improvement-ladder & Step 1: equipment rate per mile x distance & f03a9cd49d154b9086b769b786dc29a2 \\
+02-improvement-ladder & Step 2: CatBoost on raw dollars (original submission) & 35078756fc8f4814b0e74d8afc9e6507 \\
+02-improvement-ladder & Step 3: LightGBM, log target + label screen + market + calendar & 4b894229640948979217ce982a4828fb \\
+02-improvement-ladder & Step 4: structural ridge (splines, coordinates, market, trend, quarter-end) & e10eb35b0f554f30bf8f4bc245b06f25 \\
+02-improvement-ladder & Step 5: ridge + LightGBM on residuals (default settings) & bb1c3f0a4fbc45e6861f3e0ff29a3a27 \\
+02-improvement-ladder & Step 6: final model (tuned, recency-weighted) & 30477774dc994856b2eae8bfd1ba7ca3 \\
+03-ablations & Ablation: remove the market index & 33490709c76f463e9a0db586d291ec1b \\
+03-ablations & Ablation: remove the drift term & a1cecf3fa02f46ac9a168b782a53bd84 \\
+03-ablations & Ablation: remove the quarter-end ramp & a42ce529d5aa4460995ace8368c05542 \\
+03-ablations & Ablation: remove distance x market & 92d40fda9ff84b80809f5a463a75eb0e \\
+03-ablations & Ablation: add weekday dummies & e10ca665c3bd4d9094f3620baf7dc99c \\
+03-ablations & Ablation: keep corrupted labels & 2492292cd7e14169bd75062039a0167b \\
+03-ablations & Ablation: residual trees without market inputs & 0185e5309ed5476ea01f60bf07b1a1bb \\
+04-tuning & optuna-search & 716ee18304584bbf8962b9ea4859e9f7 \\
+04-tuning & nested-forward-check & 81b4968953e34dc9979a6f517dcf0b06 \\
+05-locked-test & Step 6: final model (tuned, recency-weighted) & 95fb9814916747019528b05e5b28c031 \\
+05-locked-test & Step 5: ridge + LightGBM on residuals (default settings) & 753243be347f4710b85ff8f1a8f61fc8 \\
+05-locked-test & Step 4: structural ridge (splines, coordinates, market, trend, quarter-end) & ce3e1eb6a8514b28985165157194cc42 \\
+05-locked-test & Step 3: LightGBM, log target + label screen + market + calendar & 339e36665d6c4bb094c4652058e601fe \\
+05-locked-test & Step 2: CatBoost on raw dollars (original submission) & 08450efd7cce40b39efc2687ff9aabe5 \\
+05-locked-test & Step 1: equipment rate per mile x distance & f7e1a7bceb94498c8a421cca0296961c \\
+05-locked-test & Baseline: lane rate per mile x distance & 64409dcbe41d48278c508e5c01f2e5e4 \\
+05-locked-test & Baseline: load description + naive daily price level & 63e20dd3b45641729679c755bbfd6621 \\
+06-final & champion: ridge + residual trees (tuned) & f51bb0ec64524e3eb1d170f3ee1765a4 \\
+\bottomrule
+\end{tabular}

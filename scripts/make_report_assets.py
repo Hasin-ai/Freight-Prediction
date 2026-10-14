@@ -166,7 +166,7 @@ def data_quality_facts() -> None:
     axis.set_xticks(range(1, 11))
     axis.set_xlabel("month of 2025")
     axis.set_ylabel("correlation")
-    axis.set_title("quote_signal vs rate per mile: copy, mirror or noise depending on the month")
+    axis.set_title("quote_signal vs rate per mile, by month")
     figure.tight_layout()
     figure.savefig(FIGURES / "quote_signal.png", dpi=150)
     plt.close(figure)
@@ -188,19 +188,18 @@ def ladder() -> dict[str, pd.DataFrame]:
         rows.append(
             {
                 "Step": config["step"],
-                "Model": config["name"].split(": ", 1)[1],
+                "Model": config["short_name"],
                 "Dev wMAE ($)": money(value),
                 "MAPE": f"{metrics['dev.mean.MAPE_clean']:.2f}%",
                 "Worst fold ($)": money(metrics["dev.worst.wMAE_clean"]),
                 "Change ($)": "" if previous is None else f"{value - previous:+.2f}",
-                "Run": short_id(run),
             }
         )
         define(f"DevStep{'ABCDEF'[config['step'] - 1]}", value)
         define(f"MapeDevStep{'ABCDEF'[config['step'] - 1]}", metrics["dev.mean.MAPE_clean"])
         previous = value
     table = pd.DataFrame(rows)
-    write_table("ladder", table, "rlrrrrl")
+    write_table("ladder", table, "rlrrrr")
 
     figure, axis = plt.subplots(figsize=(7.5, 3.6))
     steps = table["Step"].values
@@ -246,7 +245,7 @@ def baselines() -> None:
         config, run = config_run(path)
         rows.append(
             {
-                "Baseline": config["name"].split(": ", 1)[1],
+                "Baseline": config["short_name"],
                 "Dev wMAE ($)": money(run.data.metrics["dev.mean.wMAE_clean"]),
                 "MAPE": f"{run.data.metrics['dev.mean.MAPE_clean']:.2f}%",
                 "Run": short_id(run),
@@ -390,14 +389,13 @@ def locked_test() -> pd.DataFrame:
         )
         rows.append(
             {
-                "Model": config["name"].split(": ", 1)[1],
+                "Model": config["short_name"],
                 "wMAE ($)": money(metrics["test.mean.wMAE_clean"]),
                 "MAPE": f"{metrics['test.mean.MAPE_clean']:.2f}%",
                 "All rows MAE ($)": money(metrics["test.mean.MAE_all"]),
                 "RMSE ($)": money(metrics["test.mean.RMSE_all"]),
                 "Bias": f"{metrics['test.mean.median_bias_pct_clean']:+.2f}%",
                 "vs final, 95% CI ($)": comparison,
-                "Run": short_id(run),
             }
         )
         key = macro_key(Path(path))
@@ -407,7 +405,7 @@ def locked_test() -> pd.DataFrame:
             define(f"TestGap{key}", result["difference"])
             define(f"TestGap{key}Low", result["ci_low"])
             define(f"TestGap{key}High", result["ci_high"])
-    write_table("locked_test", pd.DataFrame(rows), "lrrrrrrl")
+    write_table("locked_test", pd.DataFrame(rows), "lrrrrrr")
     rmse = [run.data.metrics["test.mean.RMSE_all"] for _, run in runs.values()]
     define("RmseTestMin", min(rmse), 0)
     define("RmseTestMax", max(rmse), 0)
@@ -418,7 +416,9 @@ def locked_test() -> pd.DataFrame:
     october = clean[clean["date"].dt.month == 10]
     define("OctoberUnderForecast", 100 * np.median(np.log(october["actual"] / october["predicted"])), 1)
     default_gap = paired_block_bootstrap(load_predictions(runs[final["locked_test"][1]][1], "test"), final_predictions)
-    define("TunedDefaultTestPct", 100 * abs(default_gap["difference"]) / final_run.data.metrics["test.mean.MAE_clean"], 1)
+    define(
+        "TunedDefaultTestPct", 100 * abs(default_gap["difference"]) / final_run.data.metrics["test.mean.MAE_clean"], 1
+    )
     corrupt = ~final_predictions["clean"]
     absolute = (final_predictions["predicted"] - final_predictions["actual"]).abs()
     define("CorruptShareOfError", 100 * absolute[corrupt].sum() / absolute.sum(), 0)
@@ -560,7 +560,9 @@ def update_readme() -> None:
             dev = f"{latest_run(config['experiment'], config['name']).data.metrics['dev.mean.wMAE_clean']:.2f}"
         except LookupError:
             dev = "–"
-        rows.append(f"| {config['name']} | {dev} | {test['test.mean.wMAE_clean']:.2f} | {test['test.mean.MAPE_clean']:.2f}% |")
+        rows.append(
+            f"| {config['name']} | {dev} | {test['test.mean.wMAE_clean']:.2f} | {test['test.mean.MAPE_clean']:.2f}% |"
+        )
     rows.append("")
     rows.append(
         f"wMAE = clean-row MAE re-weighted to the scoring mix of new and known cities. December 31 chart value: "

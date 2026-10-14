@@ -1,4 +1,5 @@
 name: "Baseline: load description + naive daily price level"
+short_name: "Load description + naive level"
 experiment: 01-baselines
 motivation: >
   A classical forecasting baseline. Estimate each day's price level net of load mix, then carry the last day's

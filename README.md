@@ -27,7 +27,18 @@ $0.05. The locked test refuses to run twice (`make test-lock ARGS=--force` overr
 ## Results
 
 <!-- results:start -->
-_Run `make report` to fill this table from MLflow._
+| Model | Dev wMAE ($) | Locked-test wMAE ($) | Locked-test MAPE |
+|---|---:|---:|---:|
+| Step 6: final model (tuned, recency-weighted) | 42.30 | 38.14 | 1.56% |
+| Step 5: ridge + LightGBM on residuals (default settings) | 42.67 | 37.88 | 1.55% |
+| Step 4: structural ridge (splines, coordinates, market, trend, quarter-end) | 44.01 | 39.40 | 1.60% |
+| Step 3: LightGBM, log target + label screen + market + calendar | 63.77 | 48.94 | 2.08% |
+| Step 2: CatBoost on raw dollars (original submission) | 111.25 | 64.31 | 3.74% |
+| Step 1: equipment rate per mile x distance | 157.55 | 175.52 | 8.13% |
+| Baseline: lane rate per mile x distance | 144.84 | 90.66 | 3.80% |
+| Baseline: load description + naive daily price level | 74.61 | 73.98 | 3.07% |
+
+wMAE = clean-row MAE re-weighted to the scoring mix of new and known cities. December 31 chart value: $877.62. Champion run `f51bb0ec64524e3eb1d170f3ee1765a4`; locked-test run `95fb9814916747019528b05e5b28c031`.
 <!-- results:end -->
 
 ## Layout

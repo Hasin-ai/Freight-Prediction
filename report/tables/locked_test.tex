@@ -1,0 +1,14 @@
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & wMAE (\$) & MAPE & All rows MAE (\$) & RMSE (\$) & Bias & vs final, 95\% CI (\$) \\
+\midrule
+Final (tuned, recency-weighted) & 38.14 & 1.56\% & 91.86 & 630.43 & -0.58\% &  \\
+Ridge + residual trees & 37.88 & 1.55\% & 91.45 & 630.34 & -0.52\% & -0.42 [-0.81, -0.05] \\
+Structural ridge & 39.40 & 1.60\% & 92.88 & 630.65 & -0.69\% & +1.04 [+0.15, +2.08] \\
+LightGBM, log + screen + market & 48.94 & 2.08\% & 103.01 & 633.29 & -1.27\% & +11.30 [+8.01, +14.42] \\
+CatBoost, raw dollars & 64.31 & 3.74\% & 118.79 & 633.24 & +0.69\% & +27.35 [+22.60, +32.21] \\
+Equipment rate/mile x distance & 175.52 & 8.13\% & 226.67 & 669.09 & -0.72\% & +136.88 [+131.58, +143.86] \\
+Lane rate/mile x distance & 90.66 & 3.80\% & 143.74 & 662.70 & -0.80\% & +50.75 [+46.00, +56.29] \\
+Load description + naive level & 73.98 & 3.07\% & 126.82 & 639.30 & -2.86\% & +35.45 [+28.68, +44.51] \\
+\bottomrule
+\end{tabular}

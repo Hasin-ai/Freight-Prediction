@@ -1,4 +1,5 @@
 name: "Step 1: equipment rate per mile x distance"
+short_name: "Equipment rate/mile x distance"
 experiment: 02-improvement-ladder
 step: 1
 motivation: >
