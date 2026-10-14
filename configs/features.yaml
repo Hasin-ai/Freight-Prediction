@@ -1,0 +1,17 @@
+# Feature groups of the ridge stage (src/freight/features.py) and the constants behind them.
+constants:
+  time_origin: "2025-01-01"        # days_since_start counts from here
+  weight_cap_lbs: 47500            # 2.5% of loads sit exactly at this ceiling
+  weight_fill_lbs: 31000           # ~ median |weight|, used for the 0.6% missing weights
+  log_distance_centre: 6.8         # ~ log(900 mi); centres the distance x market interaction
+ridge_groups:
+  load: B-splines of log_distance, weight_lbs and the four coordinates; weight_at_cap; equipment dummies
+  market: market_level_today (log of the day's mean index) and market_deviation_this_load
+  trend: days_since_start (drift beyond the market)
+  day_of_week: weekday dummies (ablation only; the market's weekly swing already carries this)
+  quarter_end: quarter_end_progress x equipment
+  distance_x_market: (log_distance - 6.8) x market_level_today
+default_spline_knots:              # used by the reference models; the champion's knots are in final.yaml
+  distance_knots: 8
+  weight_knots: 5
+  coordinate_knots: 6

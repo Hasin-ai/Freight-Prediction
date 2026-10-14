@@ -1,0 +1,16 @@
+.env
+data/*
+!data/README.md
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+mlruns/
+outputs/tuning/
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.fls
+report/*.fdb_latexmk
+report/main.pdf

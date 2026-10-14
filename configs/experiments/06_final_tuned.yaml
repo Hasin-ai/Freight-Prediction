@@ -1,0 +1,10 @@
+name: "Step 6: final model (tuned, recency-weighted)"
+experiment: 02-improvement-ladder
+step: 6
+motivation: >
+  Step 5 with tuned spline knots and a larger, slower residual stage, and with recent loads weighted more
+  (tau = 123 days) because the price level drifts. Settings come from the Optuna search (make tune).
+reference:
+  dev_wMAE_clean: 42.30     # run b5210dda5260
+  test_wMAE_clean: 38.14    # run 22b9b7c70eb2
+model_from: configs/final.yaml

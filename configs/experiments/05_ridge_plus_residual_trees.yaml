@@ -1,0 +1,11 @@
+name: "Step 5: ridge + LightGBM on residuals (default settings)"
+experiment: 02-improvement-ladder
+step: 5
+motivation: >
+  The ridge leaves local, time-free patterns unexplained (lane geography interacting with distance and weight).
+  A small LightGBM fitted to the ridge residuals picks those up without having to extrapolate anything.
+reference:
+  dev_wMAE_clean: 42.67     # run a3e24ca2254a
+  test_wMAE_clean: 37.88    # run 59db899f5cef
+model:
+  type: ridge_plus_residual_trees

@@ -1,0 +1,11 @@
+name: "Step 3: LightGBM, log target + label screen + market + calendar"
+experiment: 02-improvement-ladder
+step: 3
+motivation: >
+  Fixes step 2's two biggest problems: predict log(rate) so errors are relative, and drop corrupted labels with
+  an in-fold screen. Adds the market index, calendar and a time counter. Trees still cannot extrapolate the
+  time counter or a market level outside the training range.
+reference:
+  dev_wMAE_clean: 63.77     # run 228779dc1e9c
+model:
+  type: lightgbm_direct

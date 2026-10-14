@@ -1,0 +1,10 @@
+name: "Baseline: load description + naive daily price level"
+experiment: 01-baselines
+motivation: >
+  A classical forecasting baseline. Estimate each day's price level net of load mix, then carry the last day's
+  level forward unchanged.
+reference:
+  dev_wMAE_clean: 74.61     # run 586467ce1189
+  test_wMAE_clean: 73.98    # run 292af1c91f1b
+model:
+  type: cross_section_naive_index

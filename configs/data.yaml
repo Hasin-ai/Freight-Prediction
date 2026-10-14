@@ -1,0 +1,22 @@
+# Input files (inside FREIGHT_DATA, mounted read-only at /data) and the fixed evaluation design.
+files:
+  train: train-test.csv                       # labelled loads, 2025-01-01..2025-10-31
+  validation: validation.csv                  # unlabelled scoring loads, 2025-11-01..2025-12-31
+  template: validation-predictions-template.csv
+  december: december-chart-inputs.csv
+expected_sha256:                              # the files used for the published results
+  train: 892980fd20bac7ac0ca4ec31d3981fca48d52dec88e4f02642ab955f1efb40fe
+  validation: f6cdc7c367b397b90b319fc7ad30fd0e1893fd6a714816dda54c303b0fe71151
+  template: 79de15adabcf807b8636b9b47ebe964d451fbcb343056c44a2c4b54a219891c6
+excluded_predictors:
+  quote_signal: copies or mirrors rate per mile in training months and is pure noise in Nov-Dec
+  load_id: identifier
+  pickup / delivery names: identity of unseen cities is unknown; coordinates carry location instead
+splits:
+  horizon_days: 61
+  dev_origins: ["2025-02-28", "2025-03-31", "2025-04-30", "2025-05-31", "2025-06-30"]
+  test_origin: "2025-08-31"                    # locked: Sep-Oct 2025, evaluated once
+  hidden_cities_per_fold: 8
+  hidden_city_seed_base: 100                   # seed = 100 + position of the origin in dev_origins + [test_origin]
+metric:
+  primary: wMAE_clean

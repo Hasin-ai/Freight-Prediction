@@ -1,0 +1,15 @@
+name: 'Ablation: remove the market index'
+experiment: 03-ablations
+hypothesis: market elasticity carries out-of-sample signal
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 76.79
+  earlier_run: bd426f66e96b
+model:
+  type: ridge_plus_residual_trees
+  params:
+    groups:
+    - load
+    - trend
+    - quarter_end
+    residual_trees_see_market: false

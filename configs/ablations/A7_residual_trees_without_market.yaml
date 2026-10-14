@@ -1,0 +1,11 @@
+name: 'Ablation: residual trees without market inputs'
+experiment: 03-ablations
+hypothesis: residual trees should be time-free
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 43.53
+  earlier_run: 13a4c203e100
+model:
+  type: ridge_plus_residual_trees
+  params:
+    residual_trees_see_market: false

@@ -1,0 +1,79 @@
+name: freight-rate-submission
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?copy .env.example to .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?copy .env.example to .env}
+      POSTGRES_DB: ${POSTGRES_DB:-mlflow}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: docker/mlflow.Dockerfile
+      secrets: [extra_ca]
+    image: freight-rate-submission/mlflow:3.5.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-mlflow}
+      --serve-artifacts --artifacts-destination /mlartifacts
+      --allowed-hosts "mlflow,mlflow:5000,localhost,localhost:*,127.0.0.1,127.0.0.1:*"
+      --workers 2
+    volumes:
+      - mlartifacts:/mlartifacts
+    ports:
+      - "${MLFLOW_PORT:-5050}:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=4)"]
+      interval: 10s
+      retries: 30
+    restart: unless-stopped
+
+  trainer:
+    build:
+      context: .
+      dockerfile: docker/trainer.Dockerfile
+      secrets: [extra_ca]
+    image: freight-rate-submission/trainer:py3.13
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      FREIGHT_DATA: /data
+      FREIGHT_OUTPUT: /app/outputs
+      GIT_PYTHON_REFRESH: quiet
+    volumes:
+      - ./:/app
+      - ${FREIGHT_DATA_DIR:-./data}:/data:ro
+    working_dir: /app
+    profiles: ["tools"]
+
+  latex:
+    build:
+      context: docker
+      dockerfile: latex.Dockerfile
+    image: freight-rate-submission/latex:texlive
+    volumes:
+      - ./report:/work
+    working_dir: /work
+    profiles: ["tools"]
+
+volumes:
+  pgdata:
+  mlartifacts:
+
+secrets:
+  extra_ca:
+    file: ${EXTRA_CA_CERT:-./docker/no-extra-ca.pem}

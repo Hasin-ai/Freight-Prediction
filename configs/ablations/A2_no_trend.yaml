@@ -1,0 +1,15 @@
+name: 'Ablation: remove the drift term'
+experiment: 03-ablations
+hypothesis: prices drift upward beyond the market index
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 56.02
+  earlier_run: 6f19af49675f
+model:
+  type: ridge_plus_residual_trees
+  params:
+    groups:
+    - load
+    - market
+    - quarter_end
+    - distance_x_market

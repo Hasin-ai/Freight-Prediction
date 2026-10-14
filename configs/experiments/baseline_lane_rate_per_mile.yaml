@@ -1,0 +1,8 @@
+name: "Baseline: lane rate per mile x distance"
+experiment: 01-baselines
+motivation: Median rate per mile of the exact lane; falls back to equipment x distance decile for new lanes.
+reference:
+  dev_wMAE_clean: 144.84    # run c331d8a922df
+  test_wMAE_clean: 90.66    # run 24b80a7f7be1
+model:
+  type: lane_rate_per_mile

@@ -1,0 +1,12 @@
+name: "Step 2: CatBoost on raw dollars (original submission)"
+experiment: 02-improvement-ladder
+step: 2
+motivation: >
+  The first submitted model (train_catboost.py). It learns geography and weight, but fits raw dollars with a
+  squared loss, so the 1.4% corrupted labels pull it around, and its month features never saw a December.
+reference:
+  dev_wMAE_clean: 111.25    # run 150dd9f1c4b7
+  test_wMAE_clean: 64.31    # run 07e7932fcfa2
+model:
+  type: catboost_raw_dollars
+  params: {iterations: 165, threads: 2}

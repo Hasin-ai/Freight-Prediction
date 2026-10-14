@@ -1,0 +1,10 @@
+name: "Step 1: equipment rate per mile x distance"
+experiment: 02-improvement-ladder
+step: 1
+motivation: >
+  The simplest sensible price: every equipment type gets its median rate per mile, multiplied by distance.
+  It ignores geography, weight and time, and sets the floor any model has to beat.
+reference:   # value logged by the earlier project (run 4321fc33f53e); used only to check reproduction
+  dev_wMAE_clean: 157.55
+model:
+  type: equipment_rate_per_mile

@@ -1,0 +1,31 @@
+# Frozen champion configuration (earlier project: selection sel-2026-10-14-T1, frozen before the locked test).
+# The values are the best Optuna trial; `make tune` re-runs the search and checks that it finds them again.
+selection_id: champion-T1
+registered_model_name: freight-rate-model
+model:
+  type: ridge_plus_residual_trees
+  params:
+    groups: [load, market, trend, quarter_end, distance_x_market]
+    alpha: 0.2649564339357501
+    recency_tau_days: 122.61806047369296
+    spline_knots: {distance_knots: 5, weight_knots: 7, coordinate_knots: 4}
+    residual_tree_params:
+      n_estimators: 293
+      learning_rate: 0.02145244449350786
+      num_leaves: 62
+      min_child_samples: 90
+      reg_lambda: 3.261559198325916
+      colsample_bytree: 0.8148594592943516
+# Evaluated once on Sep-Oct 2025 by scripts/evaluate_locked_test.py, after this file was frozen.
+locked_test:
+  - configs/experiments/06_final_tuned.yaml
+  - configs/experiments/05_ridge_plus_residual_trees.yaml
+  - configs/experiments/04_structural_ridge.yaml
+  - configs/experiments/03_lightgbm_log_market_calendar.yaml
+  - configs/experiments/02_catboost_raw_dollars.yaml
+  - configs/experiments/01_equipment_rate_per_mile.yaml
+  - configs/experiments/baseline_lane_rate_per_mile.yaml
+  - configs/experiments/baseline_naive_index.yaml
+reference:
+  december_31_rate: 877.62          # earlier run 4b46d5598143
+  december_31_without_quarter_end_ramp: 857.83

@@ -1,0 +1,11 @@
+name: 'Ablation: keep corrupted labels'
+experiment: 03-ablations
+hypothesis: the in-fold label screen helps
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 56.85
+  earlier_run: 90abae48ad73
+model:
+  type: ridge_plus_residual_trees
+  params:
+    use_label_screen: false

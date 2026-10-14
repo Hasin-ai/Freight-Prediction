@@ -1,0 +1,7 @@
+name: "Baseline: equipment rate per mile x distance"
+experiment: 01-baselines
+motivation: Same model as ladder step 1, logged with the other baselines.
+reference:
+  dev_wMAE_clean: 157.55    # run 4321fc33f53e
+model:
+  type: equipment_rate_per_mile

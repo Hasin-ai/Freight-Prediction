@@ -1,0 +1,15 @@
+name: 'Ablation: remove distance x market'
+experiment: 03-ablations
+hypothesis: long hauls respond more to the market
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 42.95
+  earlier_run: b0c9fa5f74d5
+model:
+  type: ridge_plus_residual_trees
+  params:
+    groups:
+    - load
+    - market
+    - trend
+    - quarter_end

@@ -1,0 +1,14 @@
+name: "Step 4: structural ridge (splines, coordinates, market, trend, quarter-end)"
+experiment: 02-improvement-ladder
+step: 4
+motivation: >
+  Step 3 failed on time and market, which have to extrapolate. A ridge regression on log(rate) keeps them linear:
+  market elasticity, a drift term and a quarter-end ramp, plus smooth splines for distance, weight and location.
+reference:
+  dev_wMAE_clean: 44.01     # run 5212674e6427
+  test_wMAE_clean: 39.40    # run 1fd65b0d447b
+model:
+  type: structural_ridge
+  params:
+    groups: [load, market, trend, quarter_end, distance_x_market]
+    alpha: 0.1

@@ -1,0 +1,15 @@
+name: 'Ablation: remove the quarter-end ramp'
+experiment: 03-ablations
+hypothesis: prices ramp through Mar/Jun/Sep
+compared_with: configs/experiments/05_ridge_plus_residual_trees.yaml
+reference:
+  dev_wMAE_clean: 71.66
+  earlier_run: e29bedb6366f
+model:
+  type: ridge_plus_residual_trees
+  params:
+    groups:
+    - load
+    - market
+    - trend
+    - distance_x_market
