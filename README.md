@@ -56,6 +56,7 @@ outputs/      validation_predictions.csv, december_chart_inputs.csv, validation_
               december_sensitivity.csv, scorer_results/candidate_december.png
 report/       main.tex, sections/, generated tables/ and figures/, freight_report.pdf
 scorer/       the assessment's score.py, unchanged
+requirements.txt (direct pins) · requirements.lock (full freeze of the trainer image)
 tests/        pytest: schema, label-free cleaning, folds, leakage, pyfunc round trip, outputs
 ```
 
